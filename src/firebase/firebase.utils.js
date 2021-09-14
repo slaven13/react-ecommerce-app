@@ -1,6 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import {
+  getFirestore,
+  getDocFromServer,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCx97KTUL5rjk-6UJBXWb6VszqQOuHl5jQ",
@@ -9,13 +15,49 @@ const firebaseConfig = {
   storageBucket: "react-ecommerce-app-sa.appspot.com",
   messagingSenderId: "177376415188",
   appId: "1:177376415188:web:3854f46bb23c84e4f7da41",
-  measurementId: "G-QY2F1DRQHX"
+  measurementId: "G-QY2F1DRQHX",
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth();
 export const firebaseStorage = getStorage(firebaseApp);
+export const firebaseFirestore = getFirestore(firebaseApp);
 
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account"});
-export const signInWithGoogle = () => signInWithPopup(firebaseAuth, provider);
+provider.setCustomParameters({ prompt: "select_account" });
+export const signInWithGoogle = async () => {
+  return await signInWithPopup(firebaseAuth, provider);
+};
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  const docReference = doc(firebaseFirestore, "users", userAuth.uid);
+  var user;
+
+  if (!userAuth) {
+    return;
+  }
+
+  try {
+    user = await getDocFromServer(docReference);
+  } catch (error) {
+    console.log("Error fetching the user: ", error.message);
+  }
+
+  if (!user.exists()) {
+    const { displayName, email } = userAuth;
+    const userData = {
+      displayName: displayName,
+      email: email,
+      createdAt: new Date(),
+      ...additionalData,
+    };
+
+    try {
+      return await setDoc(docReference, userData);
+    } catch (error) {
+      console.log("Error creating user: ", error.message);
+    }
+  }
+
+  return docReference;
+};

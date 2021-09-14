@@ -4,8 +4,12 @@ import { Route, Switch } from "react-router-dom";
 import ShopPage from "./pages/shop/shoppage.component";
 import { Header } from "./components/header/header.component";
 import { SignInAndSignUpPage } from "./pages/signin_and_signup/signin_and_signup.component";
-import { firebaseAuth } from "./firebase/firebase.utils";
+import {
+  firebaseAuth,
+  createUserProfileDocument,
+} from "./firebase/firebase.utils";
 import React from "react";
+import { onSnapshot } from "firebase/firestore";
 
 class App extends React.Component {
   constructor(props) {
@@ -17,17 +21,32 @@ class App extends React.Component {
   }
 
   unsubscribeFromAuth = null;
+  unsubsribeFromOnSnapshot = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = firebaseAuth.onAuthStateChanged((user) => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = firebaseAuth.onAuthStateChanged(
+      async (userAuth) => {
+        if (userAuth) {
+          const userRef = await createUserProfileDocument(userAuth);
 
-      console.log(user);
-    });
+          this.unsubsribeFromOnSnapshot = onSnapshot(userRef, (snapshot) => {
+            this.setState({
+              currentUser: {
+                id: snapshot.id,
+                ...snapshot.data(),
+              }
+            });
+          });
+        } else {
+          this.setState({ currentUser: null });
+        }
+      }
+    );
   }
 
   componentWillUnmount() {
     this.unsubscribeFromAuth();
+    this.unsubsribeFromOnSnapshot();
   }
 
   render() {
