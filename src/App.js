@@ -1,6 +1,6 @@
 import "./App.css";
 import { HomePage } from "./pages/homepage/homepage.component";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import ShopPage from "./pages/shop/shoppage.component";
 import { Header } from "./components/header/header.component";
 import { SignInAndSignUpPage } from "./pages/signin_and_signup/signin_and_signup.component";
@@ -9,6 +9,7 @@ import React from "react";
 import { onSnapshot, doc } from "firebase/firestore";
 import { connect } from "react-redux";
 import * as userActions from "./redux/user/user.actions";
+
 class App extends React.Component {
   unsubscribeFromAuth = null;
   unsubsribeFromOnSnapshot = null;
@@ -49,7 +50,17 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
-          <Route path="/signin" component={SignInAndSignUpPage} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
@@ -62,4 +73,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(App);
+const mapStateToProps = (state) => {
+  return {
+    currentUser: state.user.currentUser,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
