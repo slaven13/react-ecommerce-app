@@ -10,6 +10,28 @@
   top: 90px;
   right: 40px;
   z-index: 5;
+  justify-content: center;
+  align-content: center;
+
+  .empty-cart {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+
+    .message {
+      font-size: 18px;
+      margin: 10px auto;
+      text-align: center;
+    }
+
+    .option {
+      cursor: pointer;
+      font-weight: 700;
+      text-align: center;
+    }
+  }
 
   .cart-items {
     height: 240px;
