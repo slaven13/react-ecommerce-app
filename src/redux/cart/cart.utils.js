@@ -30,3 +30,37 @@ export const addItemToCart = (cartItems, cartItemToAdd) => {
 
   return newCartItems;
 };
+
+export const clearItemFromCart = (cartItems, cartItemId) => {
+  const existingCartItem = cartItems.find((cartItem) => cartItem.id === cartItemId);
+
+  if (!existingCartItem) {
+    return;
+  }
+
+  return cartItems.filter((cartItem) => cartItem.id !== cartItemId);
+};
+
+export const removeItem = (cartItems, cartItemToRemoveId) => {
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === cartItemToRemoveId
+  );
+
+  if (!existingCartItem) {
+    return;
+  }
+
+  if (existingCartItem.quantity === 1) {
+    return cartItems.map((cartItem) => cartItem.id !== cartItemToRemoveId);
+  }
+
+  return cartItems.map((cartItem) =>
+    cartItem.id === cartItem
+      ? {
+          ...cartItem,
+          quantity: cartItem.quantity - 1,
+          total: cartItem.total - cartItem.price,
+        }
+      : cartItem
+  );
+};
