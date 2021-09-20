@@ -1,5 +1,5 @@
 import React from "react";
-import { CustomButton } from "../../components/custom_button/custom_button.component";
+//import { CustomButton } from "../../components/custom_button/custom_button.component";
 import "./checkout.styles.scss";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -42,7 +42,7 @@ export const CheckoutPageComponent = ({ cartItems, cartTotal }) => {
       <div className="total">
         <span>TOTAL: ${cartTotal}</span>
       </div>
-      <CustomButton>ORDER NOW</CustomButton>
+      {/* <CustomButton>ORDER NOW</CustomButton> */}
     </div>
   );
 };

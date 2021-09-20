@@ -7,7 +7,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     clearItemFromCart: (cartItemId) =>
       dispatch(cartActions.clearItemFromCart(cartItemId)),
-    removeItem: (cartItemId) => dispatch(cartActions.removeItem(cartItemId)),
+    removeItemFromCart: (cartItemId) => dispatch(cartActions.removeItem(cartItemId)),
     addItemToCart: (cartItem) => dispatch(cartActions.addItemToCart(cartItem)),
   };
 };
@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch) => {
 const CheckoutItemComponent = ({
   item,
   clearItemFromCart,
-  removeItem,
+  removeItemFromCart,
   addItemToCart,
 }) => {
   const { id, name, imageUrl, price, quantity } = item;
@@ -26,7 +26,7 @@ const CheckoutItemComponent = ({
       </div>
       <span className="name">{name}</span>
       <span className="quantity">
-        <div className="arrow" onClick={() => removeItem(id)}>
+        <div className="arrow" onClick={() => removeItemFromCart(id)}>
           &#10094;
         </div>
         <span className="value">{quantity}</span>

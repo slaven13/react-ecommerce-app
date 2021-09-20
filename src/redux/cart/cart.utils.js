@@ -51,11 +51,11 @@ export const removeItem = (cartItems, cartItemToRemoveId) => {
   }
 
   if (existingCartItem.quantity === 1) {
-    return cartItems.map((cartItem) => cartItem.id !== cartItemToRemoveId);
+    return cartItems.filter((cartItem) => cartItem.id !== cartItemToRemoveId);
   }
 
   return cartItems.map((cartItem) =>
-    cartItem.id === cartItem
+    cartItem.id === cartItemToRemoveId
       ? {
           ...cartItem,
           quantity: cartItem.quantity - 1,

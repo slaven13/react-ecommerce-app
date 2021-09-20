@@ -21,7 +21,6 @@ export const clearItemFromCart = (cartItemId) => {
 }
 
 export const removeItem = (cartItemId) => {
-  console.log("cartActions.removeItem");
   return {
     type: CartActionTypes.REMOVE_ITEM,
     payload: cartItemId,
