@@ -1,11 +1,11 @@
 import "./App.css";
-import { HomePage } from "./pages/homepage/homepage.component";
+import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import ShopPage from "./pages/shop/shoppage.component";
+import { HomePage } from "./pages/homepage/homepage.component";
+import { ShopPage } from "./pages/shop/shoppage.component";
 import { Header } from "./components/header/header.component";
 import { SignInAndSignUpPage } from "./pages/signin_and_signup/signin_and_signup.component";
 import { firebaseAuth, firebaseFirestore } from "./firebase/firebase.utils";
-import React from "react";
 import { onSnapshot, doc } from "firebase/firestore";
 import { connect } from "react-redux";
 import * as userActions from "./redux/user/user.actions";
