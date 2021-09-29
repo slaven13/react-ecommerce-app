@@ -5,10 +5,7 @@ import { HomePage } from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shoppage.component";
 import { Header } from "./components/header/header.component";
 import { SignInAndSignUpPage } from "./pages/signin_and_signup/signin_and_signup.component";
-import {
-  firebaseAuth,
-  firebaseFirestore,
-} from "./firebase/firebase.utils";
+import { firebaseAuth, firebaseFirestore } from "./firebase/firebase.utils";
 import { onSnapshot, doc } from "firebase/firestore";
 import { connect } from "react-redux";
 import * as userActions from "./redux/user/user.actions";
