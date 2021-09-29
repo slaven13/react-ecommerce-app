@@ -12,6 +12,8 @@ import {
   getDocFromServer,
   doc,
   setDoc,
+  collection,
+  writeBatch,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -64,6 +66,42 @@ export const loginWithEmailAndPassword = async (email, password) => {
   } catch (error) {
     console.log("Error signin in with email and password: ", error.message);
   }
+};
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(firebaseFirestore, collectionKey);
+  const batch = writeBatch(firebaseFirestore);
+
+  try {
+    objectsToAdd.forEach((objectToAdd) => {
+      const newDocRef = doc(collectionRef);
+      batch.set(newDocRef, objectToAdd);
+    });
+
+    return await batch.commit();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const convertCollectionSnapshotToMap = (collectionSnapshot) => {
+  return collectionSnapshot.docs
+    .map((doc) => {
+      const { title, items } = doc.data();
+      return {
+        title,
+        items,
+        id: doc.id,
+        routeName: encodeURI(title.toLowerCase()),
+      };
+    })
+    .reduce((collectionsMap, collection) => {
+      collectionsMap[collection.title.toLowerCase()] = collection;
+      return collectionsMap;
+    }, {});
 };
 
 const createUserProfileDocument = async (userAuth, additionalData) => {

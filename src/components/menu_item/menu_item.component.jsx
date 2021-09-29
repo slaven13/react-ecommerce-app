@@ -10,7 +10,6 @@ const MenuItemComponent = ({
   history,
   match,
 }) => {
-  console.log(linkUrl);
   return (
     <div
       className={`menu-item ${size}`}
