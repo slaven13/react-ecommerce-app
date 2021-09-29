@@ -2,46 +2,42 @@ import React from "react";
 import { CollectionsOverview } from "../../components/collections_overview/collections_overview.component";
 import { Route } from "react-router-dom";
 import { CollectionPage } from "../collection/collection.component";
-import {
-  firebaseFirestore,
-  convertCollectionSnapshotToMap,
-} from "../../firebase/firebase.utils";
-import { collection, onSnapshot, getDocsFromServer } from "firebase/firestore";
 import * as shopActions from "../../redux/shop/shop.actions";
+import {
+  selectIsFetching,
+  selectIsCollectionsLoaded,
+} from "../../redux/shop/shop.selectors";
 import { connect } from "react-redux";
 import { WithSpinner } from "../../components/with_spinner/with_spinner.component";
+import { createStructuredSelector } from "reselect";
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCollections: (collections) =>
-      dispatch(shopActions.setCollections(collections)),
+    fetchAndsetCollections: () =>
+      dispatch(shopActions.fetchCollectionsStartAsync()),
   };
 };
+
+const mapStateToProps = createStructuredSelector({
+  isFetching: selectIsFetching,
+  isCollectionLoaded: selectIsCollectionsLoaded,
+});
 
 const CollectionOverviewWithSpinner = WithSpinner(CollectionsOverview);
 const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 class ShopPage extends React.Component {
-  unsubsribeFromOnSnapshot = null;
-
-  constructor() {
-    super();
-
-    this.state = {
-      isLoading: true,
-    };
-  }
-
   componentDidMount() {
-    const collectionRef = collection(firebaseFirestore, "collections");
-    const { setCollections } = this.props;
+    const { fetchAndsetCollections } = this.props;
+
+    fetchAndsetCollections();
 
     // 1. Promise pattern
-    getDocsFromServer(collectionRef).then((snapshot) => {
-      const transformedCollections = convertCollectionSnapshotToMap(snapshot);
+    // getDocsFromServer(collectionRef).then((snapshot) => {
+    //   const transformedCollections = convertCollectionSnapshotToMap(snapshot);
 
-      setCollections(transformedCollections);
-      this.setState({ isLoading: false });
-    });
+    //   setCollections(transformedCollections);
+    //   this.setState({ isLoading: false });
+    // });
 
     // 2. Promise with native fetch and firebase rest api
     // const projectId = "react-ecommerce-app-sa";
@@ -63,13 +59,8 @@ class ShopPage extends React.Component {
     // });
   }
 
-  componentWillUnmount() {
-    this.unsubsribeFromOnSnapshot();
-  }
-
   render() {
-    const { match } = this.props;
-    const { isLoading } = this.state;
+    const { match, isFetching, isCollectionLoaded } = this.props;
 
     return (
       <div className="shop-page">
@@ -77,13 +68,16 @@ class ShopPage extends React.Component {
           exact
           path={`${match.path}`}
           render={(props) => (
-            <CollectionOverviewWithSpinner isLoading={isLoading} {...props} />
+            <CollectionOverviewWithSpinner isLoading={isFetching} {...props} />
           )}
         />
         <Route
           path={`${match.path}/:collectionId`}
           render={(props) => (
-            <CollectionPageWithSpinner isLoading={isLoading} {...props} />
+            <CollectionPageWithSpinner
+              isLoading={!isCollectionLoaded}
+              {...props}
+            />
           )}
         />
       </div>
@@ -91,4 +85,4 @@ class ShopPage extends React.Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(ShopPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ShopPage);
