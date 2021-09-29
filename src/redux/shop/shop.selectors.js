@@ -20,12 +20,11 @@ export const selectCollection = (collectionUrlParam) => {
 };
 
 export const selectIsFetching = createSelector(
-  [selectShop], 
+  [selectShop],
   (shop) => shop.isFetching
 );
 
 export const selectIsCollectionsLoaded = createSelector(
   [selectShop],
-  (shop) => !!shop.collections,
-)
-
+  (shop) => !!shop.collections
+);
