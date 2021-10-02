@@ -2,10 +2,15 @@ import React from "react";
 import "./sign_up.styles.scss";
 import { FormInput } from "../form_input/form_input.component";
 import { CustomButton } from "../custom_button/custom_button.component";
-import {
-  signUpWithEmailAndPassword,
-} from "../../firebase/firebase.utils";
+import * as userActions from "../../redux/user/user.actions";
+import { connect } from "react-redux";
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signUpStart: (displayName, email, password) =>
+      dispatch(userActions.signUpStart({ displayName, email, password })),
+  };
+};
 class SignUp extends React.Component {
   constructor(props) {
     super(props);
@@ -20,6 +25,7 @@ class SignUp extends React.Component {
 
   handleSubmit = async (event) => {
     const { displayName, email, password, confirmPassword } = this.state;
+    const { signUpStart } = this.props;
     event.preventDefault();
 
     if (password !== confirmPassword) {
@@ -27,11 +33,7 @@ class SignUp extends React.Component {
       return;
     }
 
-    try {
-      await signUpWithEmailAndPassword(displayName, email, password);
-    } catch (error) {
-      console.log("Error signing up the user: ", error.message);
-    }
+    signUpStart(displayName, email, password);
 
     this.setState({
       displayName: "",
@@ -98,4 +100,4 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp;
+export default connect(null, mapDispatchToProps)(SignUp);

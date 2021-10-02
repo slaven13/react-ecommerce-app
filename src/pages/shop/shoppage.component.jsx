@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchAndsetCollections: () =>
-      dispatch(shopActions.fetchCollectionsStartAsync()),
+      dispatch(shopActions.fetchCollectionsStart()),
   };
 };
 class ShopPage extends React.Component {

@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import {
@@ -26,8 +27,8 @@ const firebaseConfig = {
   measurementId: "G-QY2F1DRQHX",
 };
 
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const firebaseAuth = getAuth(firebaseApp);
@@ -36,7 +37,7 @@ export const firebaseFirestore = getFirestore(firebaseApp);
 
 export const signInWithGoogle = async () => {
   try {
-    const { user } = await signInWithPopup(firebaseAuth, provider);
+    const { user } = await signInWithPopup(firebaseAuth, googleProvider);
     await createUserProfileDocument(user);
   } catch (error) {
     console.log("Error signing up with Google: ", error.message);
@@ -104,21 +105,21 @@ export const convertCollectionSnapshotToMap = (collectionSnapshot) => {
     }, {});
 };
 
-const createUserProfileDocument = async (userAuth, additionalData) => {
+export const createUserProfileDocument = async (userAuth, additionalData) => {
   const docReference = doc(firebaseFirestore, "users", userAuth.uid);
-  var user;
+  var userSnapshot;
 
   if (!userAuth) {
     return;
   }
 
   try {
-    user = await getDocFromServer(docReference);
+    userSnapshot = await getDocFromServer(docReference);
   } catch (error) {
     console.log("Error fetching the user: ", error.message);
   }
 
-  if (!user.exists()) {
+  if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
     const userData = {
       displayName: displayName,
@@ -128,9 +129,21 @@ const createUserProfileDocument = async (userAuth, additionalData) => {
     };
 
     try {
-      return await setDoc(docReference, userData);
+      await setDoc(docReference, userData);
+      userSnapshot = await getDocFromServer(docReference);
     } catch (error) {
       console.log("Error creating user: ", error.message);
     }
   }
+
+  return userSnapshot;
+};
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
 };
