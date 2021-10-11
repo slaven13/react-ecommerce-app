@@ -3,18 +3,14 @@ import { Route } from "react-router-dom";
 import * as shopActions from "../../redux/shop/shop.actions";
 import { CollectionPageContainer } from "../collection/collection.container";
 import { CollectionsOverviewContainer } from "../../components/collections_overview/collections_overview.container";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchAndsetCollections: () => dispatch(shopActions.fetchCollectionsStart()),
-  };
-};
+export const ShopPage = ({ match }) => {
+  const dispatch = useDispatch();
 
-const ShopPageComponent = ({ fetchAndsetCollections, match }) => {
   useEffect(() => {
-    fetchAndsetCollections();
-  }, [fetchAndsetCollections]);
+    dispatch(shopActions.fetchCollectionsStart());
+  }, [dispatch]);
 
   return (
     <div className="shop-page">
@@ -30,5 +26,3 @@ const ShopPageComponent = ({ fetchAndsetCollections, match }) => {
     </div>
   );
 };
-
-export const ShopPage = connect(null, mapDispatchToProps)(ShopPageComponent);
