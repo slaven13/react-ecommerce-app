@@ -19,7 +19,8 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyCx97KTUL5rjk-6UJBXWb6VszqQOuHl5jQ",
-  authDomain: "react-ecommerce-app-sa.firebaseapp.com",
+  //authDomain: "react-ecommerce-app-sa.firebaseapp.com",
+  authDomain: "https://react-ecommerce-app-sa.herokuapp.com/",
   projectId: "react-ecommerce-app-sa",
   storageBucket: "react-ecommerce-app-sa.appspot.com",
   messagingSenderId: "177376415188",
